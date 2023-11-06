@@ -1,0 +1,72 @@
+[gd_scene load_steps=4 format=3 uid="uid://b0sg82q6qh4f2"]
+
+[ext_resource type="Script" path="res://wordcontainer.gd" id="1_e0pks"]
+[ext_resource type="Script" path="res://startup.gd" id="1_y0suv"]
+[ext_resource type="Script" path="res://rect.gd" id="3_68yrt"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." node_paths=PackedStringArray("red_rect", "score_text")]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.2
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_y0suv")
+red_rect = NodePath("../Red Rect")
+score_text = NodePath("../Score Label")
+
+[node name="Turkish Words" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 20
+script = ExtResource("1_e0pks")
+
+[node name="English Words" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 20
+script = ExtResource("1_e0pks")
+
+[node name="Score Label" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.05
+anchor_right = 1.0
+anchor_bottom = 0.1
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 48
+theme_override_font_sizes/bold_font_size = 48
+bbcode_enabled = true
+text = "[center][b]Points:[/b] 0[/center]"
+fit_content = true
+
+[node name="Red Rect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0, 0, 0)
+script = ExtResource("3_68yrt")
