@@ -1,6 +1,8 @@
 extends HBoxContainer
 
-@onready var file = "res://words.txt"
+const FILENAME = "res://words.txt"
+const DEFAULT_WORDS = preload("res://default_words.gd")
+@onready var file_url = OS.get_executable_path().get_base_dir() + "/words.txt"
 @onready var turkish_words = $"Turkish Words"
 @onready var english_words = $"English Words"
 @export var red_rect: ColorRect
@@ -8,14 +10,19 @@ extends HBoxContainer
 @onready var turkish_word_buttons = ButtonGroup.new()
 @onready var english_word_buttons = ButtonGroup.new()
 @onready var score = 0
-
-const QUESTION_COUNT = 9
+@onready var font_size = max(int(get_viewport_rect().size.y / 40), 18)
 
 var turkish_words_index = {}
 var english_words_index = {}
 
 func _ready():
-	load_file(file)
+	var text
+	if OS.get_name() == "Web":
+		text = DEFAULT_WORDS.DEFAULT_WORDS
+	else:
+		text = load_file(FILENAME)
+	process_file_content(text)
+		
 	generate_buttons()
 	
 	
@@ -24,24 +31,31 @@ func create_button(word, index):
 	button.text = word
 	button.toggle_mode = true
 	button.toggled.connect(_on_button_toggled.bind(button))
+	button.add_theme_font_size_override("font_size", font_size)
+	button.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	return button
 	
 func load_file(file):
 	var f = FileAccess.open(file, FileAccess.READ)
+	var text = f.get_as_text()
+	f.close()
+	return text
+	
+func process_file_content(text):
 	var index = 1
-	while not f.eof_reached():
-		var line = f.get_line()
+	for line in text.split('\n'):
 		if line.contains(":"):
 			var english_word = line.split(":")[0].strip_edges().capitalize()
 			var turkish_word = line.split(":")[1].strip_edges().capitalize()
 			english_words_index[english_word] = index
 			turkish_words_index[turkish_word] = index
 		index += 1
-	f.close()
-	return
-	
+		
+func get_maximum_button_count():
+	return int(get_viewport_rect().size.y / (font_size * 4))
+
 func generate_buttons():
-	var question_count = min(turkish_words_index.size(), QUESTION_COUNT)
+	var question_count = min(turkish_words_index.size(), get_maximum_button_count())
 	var turkish_words_list = turkish_words_index.keys()
 	var english_words_list = english_words_index.keys()
 	
